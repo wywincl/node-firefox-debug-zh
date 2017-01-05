@@ -2,11 +2,62 @@
 # NOTE: DO *NOT* EDIT THIS FILE.  IT IS GENERATED.
 # PLEASE UPDATE Dockerfile.txt INSTEAD OF THIS FILE
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-FROM wywincl/node-base:latest
+FROM selenium/node-base:latest
 MAINTAINER wyincl <wywincl@126.com>
 
 USER root
 
+# 更新源
+RUN apt-get update -qqy
+
+# 配置中文语言
+ENV LANGUAGE zh_CN.UTF-8
+ENV LANG zh_CN.UTF-8
+ENV LC_ALL=zh_CN.UTF-8
+RUN /usr/share/locales/install-language-pack zh_CN \
+  && locale-gen zh_CN.UTF-8 \
+  && dpkg-reconfigure --frontend noninteractive locales \
+  && apt-get -qqy --no-install-recommends install language-pack-zh-hans
+
+#===================
+# Timezone settings
+# Possible alternative: https://github.com/docker/docker/issues/3359#issuecomment-32150214
+#===================
+ENV TZ "Asia/Shanghai"
+RUN echo "${TZ}" > /etc/timezone \
+  && dpkg-reconfigure --frontend noninteractive tzdata
+
+# 安装基本字体
+RUN apt-get -qqy --no-install-recommends install \
+    fonts-ipafont-gothic \
+    xfonts-100dpi \
+    xfonts-75dpi \
+    xfonts-cyrillic \
+    xfonts-scalable
+
+# 安装文泉驿微米黑字体
+RUN apt-get -qqy install ttf-wqy-microhei \
+  && ln /etc/fonts/conf.d/65-wqy-microhei.conf /etc/fonts/conf.d/69-language-selector-zh-cn.conf
+
+# 设置时区
+ENV TZ "PRC"
+RUN echo "Asia/Shanghai" | tee /etc/timezone \
+  && dpkg-reconfigure --frontend noninteractive tzdata
+
+# 添加具有免密码sudo权限的普通用用户
+RUN useradd worker --shell /bin/bash --create-home \
+  && usermod -a -G sudo worker \
+  && echo 'worker ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers \
+  && echo 'worker:pa55w0rd' | chpasswd
+
+# 安装其他基础软件
+RUN apt-get -qqy --no-install-recommends install curl wget
+
+# 删除不必要的软件和Apt缓存包列表
+RUN apt-get autoclean && \
+    apt-get autoremove && \
+    rm -rf /var/lib/apt/lists/*
+    
 #============================================
 # Google Chrome
 #============================================
