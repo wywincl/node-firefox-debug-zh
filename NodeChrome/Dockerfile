@@ -3,7 +3,7 @@
 # PLEASE UPDATE Dockerfile.txt INSTEAD OF THIS FILE
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 FROM wywincl/node-base:latest
-MAINTAINER Selenium <selenium-developers@googlegroups.com>
+MAINTAINER wyincl <wywincl@126.com>
 
 USER root
 
