@@ -3,8 +3,7 @@
 # PLEASE UPDATE Dockerfile.txt INSTEAD OF THIS FILE
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 FROM wywincl/node-chrome:latest
-MAINTAINER Selenium <selenium-developers@googlegroups.com>
-
+MAINTAINER wywincl <wywincl@126.com>
 USER root
 
 #=====
